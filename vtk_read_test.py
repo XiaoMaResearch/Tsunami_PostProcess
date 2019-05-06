@@ -1,19 +1,17 @@
 import meshio
 import glob
+import time
 
-input_folder = 'input_vtk'
-output_folder = 'output_vtk'
+input_folder = 'E:\\Tsunami_3D\\100m\\disp_Z\\input_vtk'
+output_folder = 'E:\\Tsunami_3D\\100m\\disp_Z\\output_new'
 filename = 'hex8_100m-zpos_t8980000.vtk'
-input_Path_list = glob.glob(input_folder + '/' + '*.vtk')
+input_Path_list = glob.glob(input_folder + '\\' + '*.vtk')
 
+def convert(input_Path):
 
-for input_Path in input_Path_list:
-
-    filename = input_Path.split('/')
-    print(filename)
-    output_Path = output_folder + '/' + filename[1]
+    filename = input_Path.split('\\')
+    output_Path = output_folder + '\\' + filename[-1]
     mesh = meshio.read(input_Path)
-    print(output_Path)
     meshio.write_points_cells(
         output_Path,
         mesh.points,
@@ -21,6 +19,18 @@ for input_Path in input_Path_list:
         point_data=mesh.point_data,
         )
 
+
+
+from multiprocessing import Pool, cpu_count
+
+
+if __name__ == '__main__':
+    print('num cpus = ',cpu_count())
+    t0 = time.time()
+    p = Pool()
+    p.map(convert,input_Path_list)
+    t1 = time.time()
+    print('total time=', t1-t0)
 # mesh.points -- np.ndarray
 # mesh.cells -- dict
 # mesh.point_data -- dict
